@@ -1,0 +1,10 @@
+{application,chat,
+             [{description,"Chat example using erlbus"},
+              {vsn,"0.1.0"},
+              {id,"git"},
+              {modules,[chat_app,chat_cowboy_ws_handler,chat_erlbus_handler,
+                        chat_sup]},
+              {registered,[]},
+              {applications,[kernel,stdlib,cowboy,ebus,jiffy]},
+              {mod,{chat_app,[]}},
+              {env,[]}]}.
