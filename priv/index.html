@@ -2,6 +2,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
       <title>ErlBus Chat</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
       <script src="/assets/jquery.js"></script>
       <script type="text/javascript">
         var websocket;
@@ -46,8 +47,9 @@
 
       function sendMessage() {
         if(websocket.readyState == websocket.OPEN){
+          var name = jQuery("#name").val();
           var txt = jQuery("#textToSend").val();
-          websocket.send(txt);
+          websocket.send(name+": "+txt);
           jQuery("#textToSend").val("");
         } else {
            showAlert('<span style="color: red;">ERROR: websocket is not ready</span>');
@@ -55,7 +57,9 @@
       };
 
       function showMessage(data) {
-        jQuery('#chatContainer').append('<div>' + data.sender + ' -> ' + data.msg + '</div>');
+        jQuery('#chatContainer').append('<div>' + data.msg + '</div>');
+        var name = jQuery("#name").val();
+        jQuery('#nameContainer').append('<div>' + name + '</div>');
       };
 
       function showAlert(txt) {
@@ -64,27 +68,54 @@
       }
       </script>
       <style>
-        #chatContainer {
-          background-color:lightgray;
-          min-width: 300px;
-          min-height: 200px;
+        #connectButton {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
         }
+        #chatContainer {
+          float: left;
+    padding: 20px;
+    width: 70%;
+    background-color: #f1f1f1;
+    height: 300px; /* only for demonstration, should be removed */
+        }
+        #nameContainer {
+          float: right;
+    padding: 20px;
+    width: 70%;
+    background-color: #f1f1f1;
+    height: 300px; 
+            }
       </style>
   </head>
   <body>
     <div id="alertContainer"></div>
-    <input id="connectButton" type="button" value="Join the Chat Room!" onclick="connect();"/>
+    <input class="btn btn-primary" id="connectButton" type="button" value="Join the Chat Room!" onclick="connect();"/>
 
     <div id="roomContainer">
-      <div id="chatContainer"></div>
+        <div id="nameContainer">
+
+
+
+      </div>
+      <div id="chatContainer">
+
+
+
+      </div>
       <form onsubmit="sendMessage(); return false;">
+        <span>
+          <input id="name" type="text" />
+        </span>
         <span>
           <input id="textToSend" type="text" />
         </span>
         <span>
-          <input type="submit" value="send"/> 
+          <input  class="btn btn-primary" type="submit" value="send"/> 
         </span>
       </form>
+      
     </div>
   </body>
 </html>
