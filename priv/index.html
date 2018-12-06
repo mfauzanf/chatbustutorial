@@ -48,7 +48,15 @@
       };  
 
       function onMessage(evt) { 
-        showMessage(jQuery.parseJSON(evt.data));
+        console.log(evt.data)
+        var data = jQuery.parseJSON(evt.data)
+        if (data.msg!=undefined) {
+           showMessage(data);
+        }
+        else {
+          jQuery('#nameContainer').append('<div>' + data.sender + '</div>');
+           
+        }
       };  
 
       function onError(evt) {
@@ -114,8 +122,7 @@
     <input class="btn btn-primary" id="connectButton" type="button" value="Join ChatBus Room!" onclick="connect();"/>
 
     <div id="roomContainer">
-        <div id="nameContainer">
-      </div>
+        <div id="nameContainer"> </div>
       <div id="chatContainer">
       </div>
       <form onsubmit="sendMessage(); return false;">

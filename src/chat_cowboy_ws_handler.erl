@@ -28,6 +28,7 @@ websocket_handle({text, Msg}, Req, State) ->
       <<"name">> ->
           NewState = #state{name = Msg1 , handler = State#state.handler},
           ebus:pub(?CHATROOM_NAME, {<<"Selamat Datang ! ">>, Msg1}),
+          ebus:pub(?CHATROOM_NAME, {Msg1}),
           {ok, Req, NewState};
       <<"ChatBusRoom">> ->
         ebus:pub(?CHATROOM_NAME, {State#state.name, Msg1}),
@@ -40,6 +41,10 @@ websocket_handle(_Data, Req, State) ->
 
 websocket_info({message_published, {Sender, Msg}}, Req, State) ->
   {reply, {text, jiffy:encode({[{sender, Sender}, {msg, Msg}]})}, Req, State};
+
+websocket_info({message_published, {Sender}}, Req, State) ->
+  {reply, {text, jiffy:encode({[{sender, Sender}]})}, Req, State};
+
 websocket_info(_Info, Req, State) ->
   {ok, Req, State}.
 
