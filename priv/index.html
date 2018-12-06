@@ -115,8 +115,9 @@
           background: #ccc;
           padding: 20px;
         }
-        #kanan {
-          float : right;
+        #chatArea {
+          position: relative;
+          left: 465px;
         }
       </style>
   </head>
@@ -130,9 +131,9 @@
       <div id="chatContainer">
       </div>
       <form onsubmit="sendMessage(); return false;">
-       <div id="kanan">
+       <div class="input-group" id="chatArea">
         <span>
-          <input id="textToSend" placeholder="Say Hello!" type="text" />
+          <input id="textToSend" class="form-control position-relative" placeholder="Say Hello!" type="text" />
         </span>
         <span>
           <input  class="btn btn-primary" type="submit" value="send"/> 
