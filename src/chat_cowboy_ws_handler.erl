@@ -23,8 +23,18 @@ websocket_init(_Type, Req, _Opts) ->
   {ok, Req, #state{name = get_name(Req), handler = Handler}, ?TIMEOUT}.
 
 websocket_handle({text, Msg}, Req, State) ->
-  ebus:pub(?CHATROOM_NAME, {State#state.name, Msg}),
-  {ok, Req, State};
+    {ok, {Type, Msg1}} = parse_message(Msg),
+  case Type of
+      <<"name">> ->
+          NewState = #state{name = Msg1 , handler = State#state.handler},
+          ebus:pub(?CHATROOM_NAME, {<<"Selamat Datang ! ">>, Msg1}),
+          {ok, Req, NewState};
+      <<"ChatBusRoom">> ->
+        ebus:pub(?CHATROOM_NAME, {State#state.name, Msg1}),
+        {ok, Req, State}
+  end;
+
+
 websocket_handle(_Data, Req, State) ->
   {ok, Req, State}.
 
@@ -39,6 +49,13 @@ websocket_terminate(_Reason, _Req, State) ->
   ok.
 
 %% Private methods
+
+parse_message(Msg) ->
+    {struct, Msg1}         = mochijson2:decode(Msg),
+    {<<"type">>, Type}     = lists:keyfind(<<"type">>, 1, Msg1),
+    {<<"msg">>,  Content}  = lists:keyfind(<<"msg">>, 1, Msg1),
+    {ok, {Type, Content}}.
+
 
 get_name(Req) ->
   {{Host, Port}, _} = cowboy_req:peer(Req),
