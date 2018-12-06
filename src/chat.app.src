@@ -9,6 +9,7 @@
     stdlib,
     cowboy,
     ebus,
+    mochiweb,
     jiffy
   ]},
   {mod, {chat_app, []}},

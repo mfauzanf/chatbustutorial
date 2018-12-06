@@ -20,19 +20,29 @@
         };
 
         function connect() {
-        wsHost = "ws://" + window.location.host + "/websocket";
-        websocket = new WebSocket(wsHost);
-        websocket.onopen = function(evt) { onOpen(evt) }; 
-        websocket.onclose = function(evt) { onClose(evt) }; 
-        websocket.onmessage = function(evt) { onMessage(evt) }; 
-        websocket.onerror = function(evt) { onError(evt) }; 
+          if(jQuery("#name").val() == "") {
+            showAlert('<span style="color: red;">Please Insert Your Nickname</span>')
+          }
+          else {
+            wsHost = "ws://" + window.location.host + "/websocket";
+            websocket = new WebSocket(wsHost);
+            websocket.onopen = function(evt) { onOpen(evt) }; 
+            websocket.onclose = function(evt) { onClose(evt) }; 
+            websocket.onmessage = function(evt) { onMessage(evt) }; 
+            websocket.onerror = function(evt) { onError(evt) };
+          } 
       }; 
 
       function onOpen(evt) { 
+        var name = jQuery('#name').val();
+        websocket.send(JSON.stringify({ "type": "name", "msg": name }));
+        jQuery('#name').val();
+        jQuery('#name').hide();
         jQuery('#roomContainer').fadeIn('slow');
       };  
 
-      function onClose(evt) { 
+      function onClose(evt) {
+        jQuery('#name').fadeIn();
         jQuery('#roomContainer').fadeOut('slow');
         showAlert('<span style="color: red;">Websocket connection has been closed!</span>');
       };  
@@ -49,7 +59,9 @@
         if(websocket.readyState == websocket.OPEN){
           var name = jQuery("#name").val();
           var txt = jQuery("#textToSend").val();
-          websocket.send(name+": "+txt);
+          websocket.send(JSON.stringify({ "type": "ChatBusRoom", "msg": txt }));
+          
+          //websocket.send(name+": "+txt);
           jQuery("#textToSend").val("");
         } else {
            showAlert('<span style="color: red;">ERROR: websocket is not ready</span>');
@@ -57,9 +69,8 @@
       };
 
       function showMessage(data) {
-        jQuery('#chatContainer').append('<div>' + data.msg + '</div>');
-        var name = jQuery("#name").val();
-        jQuery('#nameContainer').append('<div>' + name + '</div>');
+        jQuery('#chatContainer').append('<div>' + data.sender + "" + data.msg + '</div>');
+        //var name = jQuery("#name").val();
       };
 
       function showAlert(txt) {
@@ -81,39 +92,36 @@
     height: 300px; /* only for demonstration, should be removed */
         }
         #nameContainer {
-          float: right;
-    padding: 20px;
-    width: 70%;
-    background-color: #f1f1f1;
-    height: 300px; 
-            }
+          float: left;
+          width: 30%;
+          height: 300px; /* only for demonstration, should be removed */
+          background: #ccc;
+          padding: 20px;
+        }
+        #kanan {
+          float : right;
+        }
       </style>
   </head>
   <body>
     <div id="alertContainer"></div>
-    <input class="btn btn-primary" id="connectButton" type="button" value="Join the Chat Room!" onclick="connect();"/>
+    <input placeholder="Your Nickname Here"  id="name" type="text" />
+    <input class="btn btn-primary" id="connectButton" type="button" value="Join ChatBus Room!" onclick="connect();"/>
 
     <div id="roomContainer">
         <div id="nameContainer">
-
-
-
       </div>
       <div id="chatContainer">
-
-
-
       </div>
       <form onsubmit="sendMessage(); return false;">
+       <div id="kanan">
         <span>
-          <input id="name" type="text" />
-        </span>
-        <span>
-          <input id="textToSend" type="text" />
+          <input id="textToSend" placeholder="Say Hello!" type="text" />
         </span>
         <span>
           <input  class="btn btn-primary" type="submit" value="send"/> 
         </span>
+       </div>
       </form>
       
     </div>
