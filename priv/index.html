@@ -69,7 +69,12 @@
       };
 
       function showMessage(data) {
-        jQuery('#chatContainer').append('<div>' + data.sender + "" + data.msg + '</div>');
+        if(data.sender=="Selamat Datang ! ") {
+          jQuery('#chatContainer').append('<div>' + data.sender + "" + data.msg + '</div>');
+        }
+        else {
+          jQuery('#chatContainer').append('<div>' + data.sender + " : " + data.msg + '</div>');
+        }
         //var name = jQuery("#name").val();
       };
 
